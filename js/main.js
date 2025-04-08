@@ -4,32 +4,48 @@ let questions = [
     answers: ["hoi", "hoI", "HOI", "Hoi"],
     correctAnswer: 0
   },
-  // Add more questions here...
+  // Add more questions here
 ];
 
 let currentQuestion = 0;
+const mainElement = document.querySelector('.main');
+const answerButtons = document.querySelectorAll('.main-btn');
+const questionElement = document.createElement('div');
+questionElement.className = 'question';
+mainElement.insertBefore(questionElement, answerButtons[0]);
 
-function askQuestion() {
+function displayQuestion() {
   if (currentQuestion >= questions.length) {
-    console.log("No more questions!");
+    questionElement.textContent = "Quiz completed!";
     return;
   }
 
   let question = questions[currentQuestion];
-  console.log(question.question);
-  for (let i = 0; i < question.answers.length; i++) {
-    console.log(`${i + 1}. ${question.answers[i]}`);
-  }
-
-  let answer = prompt("Enter the number of your answer:");
-  if (answer == question.correctAnswer + 1) {
-    console.log("Correct!");
-  } else {
-    console.log(`Sorry, the correct answer was ${question.answers[question.correctAnswer]}.`);
-  }
-
-  currentQuestion++;
-  askQuestion();
+  questionElement.textContent = question.question;
+  
+  answerButtons.forEach((btn, index) => {
+    if (index < question.answers.length) {
+      btn.textContent = question.answers[index];
+      btn.style.display = 'block';
+      btn.onclick = () => checkAnswer(index);
+    } else {
+      btn.style.display = 'none';
+    }
+  });
 }
 
-askQuestion();
+function checkAnswer(selectedIndex) {
+  let question = questions[currentQuestion];
+  if (selectedIndex === question.correctAnswer) {
+    questionElement.textContent += " - Correct!";
+  } else {
+    questionElement.textContent += ` - Wrong! Correct answer was: ${question.answers[question.correctAnswer]}`;
+  }
+  
+  setTimeout(() => {
+    currentQuestion++;
+    displayQuestion();
+  }, 1500);
+}
+
+displayQuestion();
